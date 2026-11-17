@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>고2 역학과 에너지 | 탄성파의 위상·투과와 반사 실험실</title>
+
+  <!-- Google Fonts: Pretendard & Inter for clean Korean & Latin typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- KaTeX CSS & JS (v0.16.11) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    /* 기본 폰트 및 스크롤 안정성 설정 */
+    body {
+      font-family: 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      overflow-x: hidden;
+    }
+
+    /* KaTeX 수식 정렬 미세 조정 */
+    .katex {
+      font-size: 1.02em;
+    }
+
+    /* 캔버스 위 KaTeX 오버레이 라벨 스타일 */
+    .katex-tag {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.35;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+      z-index: 10;
+    }
+
+    /* 커스텀 레인지 슬라이더 스타일 */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 9999px;
+      background: #cbd5e1;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #2563eb;
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      box-shadow: 0 1px 4px rgba(37, 99, 235, 0.45);
+      transition: transform 0.12s ease, background-color 0.12s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+      background: #1d4ed8;
+    }
+    input[type="range"]:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    input[type="range"]:disabled::-webkit-slider-thumb {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    /* 프리셋 버튼 활성화 효과 */
+    .preset-btn {
+      transition: all 0.15s ease;
+    }
+    .preset-btn:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ==================== 1. 상단 헤더 바 ==================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold bg-blue-600 text-white tracking-tight shadow-sm">
+          고2 역학과 에너지
+        </span>
+        <div>
+          <h1 class="text-base sm:text-xl font-bold text-slate-900 leading-tight">
+            탄성파의 위상 · 투과와 반사 실험실
+          </h1>
+          <p class="text-xs text-slate-500 hidden sm:block">
+            파동의 위상($\Delta\phi$), 고정단·자유단 반사 및 줄의 굵기(밀도)에 따른 투과와 반사 탐구
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- 교과 핵심 관계식 배지 -->
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
+          <span>기본 관계식:</span>
+          <span class="px-2 py-0.5 rounded bg-white border border-slate-200 text-blue-700">$v = f\lambda$</span>
+          <span class="px-2 py-0.5 rounded bg-white border border-slate-200 text-emerald-700">$f_1 = f_2$</span>
+        </div>
+
+        <!-- 전체 초기화 버튼 -->
+        <button id="btnResetAll" type="button"
+          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 transition shadow-sm"
+          title="모든 설정을 초기 상태로 되돌립니다 (단축키: R)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>초기화</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== 2. 3단 학습 탭 내비게이션 ==================== -->
+    <nav class="bg-slate-50 border-t border-slate-200">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <button id="tabBtn0" type="button" data-tab="0"
+          class="tab-btn flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition shadow-sm bg-blue-600 text-white border-blue-600">
+          <span class="w-5 h-5 rounded-full bg-white/20 text-xs flex items-center justify-center">1</span>
+          <span>파동의 위상 비교 ($\Delta\phi$)</span>
+        </button>
+
+        <button id="tabBtn1" type="button" data-tab="1"
+          class="tab-btn flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition bg-white text-slate-700 border-slate-200 hover:bg-slate-100">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center">2</span>
+          <span>고정단 반사 · 가는 줄 $\rightarrow$ 굵은 줄 ($v_1 > v_2$)</span>
+        </button>
+
+        <button id="tabBtn2" type="button" data-tab="2"
+          class="tab-btn flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition bg-white text-slate-700 border-slate-200 hover:bg-slate-100">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center">3</span>
+          <span>자유단 반사 · 굵은 줄 $\rightarrow$ 가는 줄 ($v_1 < v_2$)</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ==================== 메인 콘텐츠 영역 ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 flex flex-col gap-4">
+
+    <!-- ==================== 3. 메인 시뮬레이션 캔버스 스테이지 ==================== -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <!-- 상단 재생 컨트롤 및 관찰 도구 바 -->
+      <div class="px-3 sm:px-5 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+        <!-- 재생 / 프레임 이동 / 다시 보내기 -->
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <button id="btnPlayPause" type="button"
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition">
+            <span id="playPauseIcon">⏸</span>
+            <span id="playPauseLabel">일시정지</span>
+          </button>
+
+          <button id="btnStepBack" type="button"
+            class="px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition"
+            title="이전 프레임으로 이동 (단축키: ←)">
+            ◀ 이전
+          </button>
+
+          <button id="btnStepForward" type="button"
+            class="px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition"
+            title="다음 프레임으로 이동 (단축키: →)">
+            다음 ▶
+          </button>
+
+          <button id="btnRelaunch" type="button"
+            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+            <span>↻ 파동 다시 보내기</span>
+          </button>
+
+          <!-- 배속 선택 -->
+          <div class="inline-flex items-center rounded-xl bg-white border border-slate-300 p-0.5 text-xs font-semibold">
+            <button type="button" data-speed="0.25" class="speed-btn px-2 py-1 rounded-lg text-slate-600 hover:bg-slate-100">$0.25\times$</button>
+            <button type="button" data-speed="0.5" class="speed-btn px-2 py-1 rounded-lg text-slate-600 hover:bg-slate-100">$0.5\times$</button>
+            <button type="button" data-speed="1" class="speed-btn px-2 py-1 rounded-lg bg-slate-800 text-white">$1.0\times$</button>
+          </div>
+        </div>
+
+        <!-- 시각 보조 토글 스위치 -->
+        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-700">
+          <label id="wrapToggleGhost" class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+            <input id="toggleGhost" type="checkbox" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+            <span>입사파 원래 모양(잔상)</span>
+          </label>
+
+          <label id="wrapToggleWavelength" class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+            <input id="toggleWavelength" type="checkbox" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+            <span>파장($\lambda$) 눈금자</span>
+          </label>
+
+          <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+            <input id="toggleParticles" type="checkbox" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+            <span>매질 입자 표시</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 캔버스 + KaTeX 동기화 오버레이 스테이지 -->
+      <div id="canvasStage" class="relative w-full h-[330px] sm:h-[380px] lg:h-[420px] bg-white select-none overflow-hidden">
+        <canvas id="waveCanvas" class="block w-full h-full"></canvas>
+
+        <!-- KaTeX 동적 오버레이 레이어 (모든 물리량 라벨은 여기서 KaTeX로 렌더링) -->
+        <div id="katexOverlayLayer" class="absolute inset-0 pointer-events-none overflow-hidden">
+          <!-- 탭 1 전용 라벨 -->
+          <span id="tagTab1Wave1" class="katex-tag hidden bg-rose-50 text-rose-700 border border-rose-200"></span>
+          <span id="tagTab1Wave2" class="katex-tag hidden bg-blue-50 text-blue-700 border border-blue-200"></span>
+          <span id="tagTab1Diff" class="katex-tag hidden bg-slate-900 text-white"></span>
+
+          <!-- 탭 2·3 매질 영역 라벨 -->
+          <span id="tagMed1" class="katex-tag hidden bg-blue-50/95 text-blue-800 border border-blue-200"></span>
+          <span id="tagMed2" class="katex-tag hidden bg-emerald-50/95 text-emerald-800 border border-emerald-200"></span>
+          <span id="tagBoundary" class="katex-tag hidden bg-slate-800 text-white"></span>
+
+          <!-- 탭 2·3 파동 추적 라벨 (입사파 / 반사파 / 투과파 / 잔상) -->
+          <span id="tagIncident" class="katex-tag hidden bg-blue-600 text-white"></span>
+          <span id="tagReflected" class="katex-tag hidden bg-rose-600 text-white"></span>
+          <span id="tagTransmitted" class="katex-tag hidden bg-emerald-600 text-white"></span>
+          <span id="tagGhost" class="katex-tag hidden bg-slate-100/90 text-slate-600 border border-dashed border-slate-400"></span>
+
+          <!-- 파장 측정 브래킷 라벨 -->
+          <span id="tagLambda1" class="katex-tag hidden bg-blue-100 text-blue-900 border border-blue-300"></span>
+          <span id="tagLambda2" class="katex-tag hidden bg-emerald-100 text-emerald-900 border border-emerald-300"></span>
+
+          <!-- 고정단 작용·반작용 힘 벡터 라벨 -->
+          <span id="tagForceWall" class="katex-tag hidden bg-blue-50 text-blue-800 border border-blue-300"></span>
+          <span id="tagForceString" class="katex-tag hidden bg-emerald-50 text-emerald-800 border border-emerald-300"></span>
+        </div>
+      </div>
+
+      <!-- 하단 상태 안내 바 -->
+      <div id="stageCaptionBar" class="px-4 py-2 bg-slate-50 border-t border-slate-200 text-xs sm:text-sm text-slate-700 flex flex-wrap items-center justify-between gap-2">
+        <div id="liveConceptBanner" class="font-medium"></div>
+        <div id="liveTimeReadout" class="text-xs font-semibold text-slate-500"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. 하단 2열 컨트롤 & 교과 분석 패널 ==================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- 좌측 패널 (7칸): 원클릭 학습 프리셋 + 세부 물리량 슬라이더 -->
+      <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col gap-4">
+        <!-- A. 원클릭 학습 프리셋 영역 -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+              <span>원클릭 교과 학습 프리셋</span>
+            </h2>
+            <span class="text-xs text-slate-500">클릭 시 즉시 실험 조건이 적용됩니다</span>
+          </div>
+
+          <!-- 탭 1 전용 프리셋 그룹 -->
+          <div id="presetGroupTab0" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button type="button" data-preset="phase_0"
+              class="preset-btn p-2.5 rounded-xl border border-blue-600 bg-blue-50 text-blue-900 text-xs font-bold text-center shadow-sm">
+              <div>위상 일치</div>
+              <div class="mt-0.5 text-blue-700">$\Delta\phi = 0^\circ$</div>
+            </button>
+            <button type="button" data-preset="phase_180"
+              class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-center">
+              <div>반대 위상</div>
+              <div class="mt-0.5 text-rose-600">$\Delta\phi = 180^\circ$</div>
+            </button>
+            <button type="button" data-preset="phase_90"
+              class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-center">
+              <div>위상 다름</div>
+              <div class="mt-0.5 text-emerald-700">$\Delta\phi = 90^\circ$</div>
+            </button>
+            <button type="button" data-preset="phase_270"
+              class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-center">
+              <div>위상 다름</div>
+              <div class="mt-0.5 text-amber-700">$\Delta\phi = 270^\circ$</div>
+            </button>
+          </div>
+
+          <!-- 탭 2·3 전용 경계·줄 굵기 프리셋 그룹 -->
+          <div id="presetGroupWave" class="hidden flex flex-col gap-2.5">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <button type="button" data-preset="fixed_wall"
+                class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-left">
+                <div class="text-slate-900">벽면 고정단 반사</div>
+                <div class="mt-0.5 text-rose-600 font-semibold">반사 위상 $\Delta\phi = 180^\circ$</div>
+              </button>
+
+              <button type="button" data-preset="free_rod"
+                class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-left">
+                <div class="text-slate-900">막대 자유단 반사</div>
+                <div class="mt-0.5 text-emerald-700 font-semibold">반사 위상 $\Delta\phi = 0^\circ$</div>
+              </button>
+
+              <button type="button" data-preset="thin_to_thick"
+                class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-left">
+                <div class="text-slate-900">가는 줄 $\rightarrow$ 굵은 줄</div>
+                <div class="mt-0.5 text-blue-700 font-semibold">$v_1 : v_2 = 2 : 1$</div>
+              </button>
+
+              <button type="button" data-preset="thick_to_thin"
+                class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-left">
+                <div class="text-slate-900">굵은 줄 $\rightarrow$ 가는 줄</div>
+                <div class="mt-0.5 text-emerald-700 font-semibold">$v_1 : v_2 = 1 : 2$</div>
+              </button>
+
+              <button type="button" data-preset="very_thick"
+                class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-left">
+                <div class="text-slate-900">매우 굵은 줄로 진행</div>
+                <div class="mt-0.5 text-indigo-700 font-semibold">$v_1 : v_2 = 4 : 1$</div>
+              </button>
+
+              <button type="button" data-preset="same_string"
+                class="preset-btn p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-left">
+                <div class="text-slate-900">굵기가 같은 줄</div>
+                <div class="mt-0.5 text-slate-600 font-semibold">$v_1 = v_2$ (반사 없음)</div>
+              </button>
+            </div>
+
+            <!-- 파형 및 출발 위상 프리셋 -->
+            <div class="pt-1 border-t border-slate-100">
+              <div class="text-xs font-bold text-slate-600 mb-1.5">파형 및 출발 위상($\phi_0$) 선택</div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button type="button" data-wavepreset="pulse_0"
+                  class="wave-preset-btn px-2.5 py-2 rounded-xl border border-blue-600 bg-blue-50 text-blue-900 text-xs font-bold text-center">
+                  <div>단일 펄스 (마루)</div>
+                  <div class="text-blue-700">$\phi_0 = 0^\circ$</div>
+                </button>
+                <button type="button" data-wavepreset="pulse_180"
+                  class="wave-preset-btn px-2.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-center">
+                  <div>단일 펄스 (골)</div>
+                  <div class="text-rose-600">$\phi_0 = 180^\circ$</div>
+                </button>
+                <button type="button" data-wavepreset="sine_0"
+                  class="wave-preset-btn px-2.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-center">
+                  <div>연속 파동 (기본)</div>
+                  <div class="text-emerald-700">$\phi_0 = 0^\circ$</div>
+                </button>
+                <button type="button" data-wavepreset="sine_90"
+                  class="wave-preset-btn px-2.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-bold text-center">
+                  <div>연속 파동 (이동)</div>
+                  <div class="text-amber-700">$\phi_0 = 90^\circ$</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B. 세부 물리량 조절 슬라이더 영역 -->
+        <div class="pt-3 border-t border-slate-200 flex flex-col gap-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            <span>세부 물리량 직접 조절</span>
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <!-- 슬라이더 1: 출발 위상 (또는 위상차) -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+                <span id="labelSliderPhase" class="text-slate-700">출발 위상 ($\phi_0$)</span>
+                <span id="valSliderPhase" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-blue-700">$0^\circ$</span>
+              </div>
+              <input id="sliderPhase" type="range" min="0" max="360" step="15" value="0" class="w-full" />
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                <span>$0^\circ$</span>
+                <span>$90^\circ$</span>
+                <span>$180^\circ$</span>
+                <span>$270^\circ$</span>
+                <span>$360^\circ$</span>
+              </div>
+            </div>
+
+            <!-- 슬라이더 2: 진동수 f -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-700">진동수 ($f$)</span>
+                <span id="valSliderFreq" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-blue-700">$1.0\text{ Hz}$</span>
+              </div>
+              <input id="sliderFreq" type="range" min="0.5" max="2.5" step="0.25" value="1.0" class="w-full" />
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                <span>$0.5\text{ Hz}$</span>
+                <span>$1.5\text{ Hz}$</span>
+                <span>$2.5\text{ Hz}$</span>
+              </div>
+            </div>
+
+            <!-- 슬라이더 3: 입사파 진폭 A -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-700">입사파 진폭 ($A$)</span>
+                <span id="valSliderAmp" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-blue-700">$3.0\text{ cm}$</span>
+              </div>
+              <input id="sliderAmp" type="range" min="1.0" max="5.0" step="0.5" value="3.0" class="w-full" />
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                <span>$1.0\text{ cm}$</span>
+                <span>$3.0\text{ cm}$</span>
+                <span>$5.0\text{ cm}$</span>
+              </div>
+            </div>
+
+            <!-- 슬라이더 4: 줄 1 굵기(밀도) / 속력 v1 (탭 2·3에서 활성화) -->
+            <div id="boxSliderV1" class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-700">줄 1 굵기 · 속력 ($v_1$)</span>
+                <span id="valSliderV1" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-blue-700">$4.0\text{ m/s}$</span>
+              </div>
+              <input id="sliderV1" type="range" min="1.0" max="6.0" step="0.5" value="4.0" class="w-full" />
+              <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+                <span>굵은 줄 (느림)</span>
+                <span id="descV1" class="font-semibold text-blue-700">가는 줄</span>
+                <span>가는 줄 (빠름)</span>
+              </div>
+            </div>
+
+            <!-- 슬라이더 5: 줄 2 굵기(밀도) / 속력 v2 (두 줄 연결 모드에서 활성화) -->
+            <div id="boxSliderV2" class="sm:col-span-2 p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-700">줄 2 굵기 · 속력 ($v_2$)</span>
+                <span id="valSliderV2" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-emerald-700">$2.0\text{ m/s}$</span>
+              </div>
+              <input id="sliderV2" type="range" min="1.0" max="6.0" step="0.5" value="2.0" class="w-full" />
+              <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+                <span>굵은 줄 (느림)</span>
+                <span id="descV2" class="font-semibold text-emerald-700">굵은 줄</span>
+                <span>가는 줄 (빠름)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 우측 패널 (5칸): 실시간 물리량 비교 표 + 교과 핵심 요약 카드 -->
+      <section class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col justify-between gap-4">
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+              <span id="tableTitle">실시간 교과 물리량 비교</span>
+            </h2>
+            <span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-xs font-bold">$v = f\lambda$</span>
+          </div>
+
+          <!-- 비교 표 (탭 1과 탭 2·3에 맞춰 내용 전환, 모든 물리량 KaTeX 적용) -->
+          <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-xs sm:text-sm text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                  <th class="py-2.5 px-3 font-bold">비교 항목</th>
+                  <th id="thCol1" class="py-2.5 px-3 font-bold text-center text-blue-800">줄 1 (입사 영역)</th>
+                  <th id="thCol2" class="py-2.5 px-3 font-bold text-center text-emerald-800">줄 2 (투과 영역)</th>
+                </tr>
+              </thead>
+              <tbody id="comparisonTableBody" class="divide-y divide-slate-200 bg-white">
+                <!-- JS에서 동적으로 렌더링 및 KaTeX 변환 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 교과 핵심 정리 카드 -->
+        <div class="p-3.5 sm:p-4 rounded-xl bg-amber-50/80 border border-amber-200/90 text-slate-800">
+          <div class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-amber-900 mb-1.5">
+            <span>📌 교과 핵심 개념 정리</span>
+          </div>
+          <div id="textbookSummaryBox" class="text-xs sm:text-sm leading-relaxed space-y-1.5 text-slate-700">
+            <!-- JS에서 현재 학습 탭과 조건에 맞춰 KaTeX와 함께 렌더링 -->
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==================== JavaScript 물리 엔진 및 UI 컨트롤러 ==================== -->
+  <script>
+    /**
+     * ============================================================================
+     * [설계 원칙]
+     * 1. 백그라운드 물리 엔진(1차원 유한차분 파동 솔버, 흡수 경계 등)은 정확한 파동 현상을
+     *    재현하기 위해 내부적으로 동작하지만, 고2 「역학과 에너지」 교육과정 범위를
+     *    벗어나는 기호나 수식은 화면 UI에 일절 노출하지 않습니다.
+     * 2. 화면에 표시되는 모든 물리량 문자, 첨자, 각도, 단위는 예외 없이 KaTeX로 렌더링합니다.
+     * ============================================================================
+     */
+
+    // ---------------------------------------------------------------------------
+    // 1. KaTeX 안전 렌더링 유틸리티
+    // ---------------------------------------------------------------------------
+    function renderKatexInElement(el) {
+      if (!el || typeof renderMathInElement === 'undefined') return;
+      renderMathInElement(el, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+    }
+
+    function setKatexHTML(el, htmlWithTex) {
+      if (!el) return;
+      el.innerHTML = htmlWithTex;
+      renderKatexInElement(el);
+    }
+
+    // ---------------------------------------------------------------------------
+    // 2. 시뮬레이션 상태 및 매개변수 정의
+    // ---------------------------------------------------------------------------
+    const GRID_N = 600;               // 공간 격자 수 (내부 연산용)
+    const DOMAIN_LENGTH = 12.0;       // 전체 줄 표시 길이 (m)
+    const DX = DOMAIN_LENGTH / GRID_N;// 공간 간격 (0.02 m)
+    const DT = 0.0015;                // 안정적 시간 간격 (m/s 최대 6.0 기준 안정)
+    const SUBSTEPS = 11;              // 프레임당 물리 서브스텝 수
+
+    const state = {
+      activeTab: 1,                   // 0: 위상 비교, 1: 고정단 & 가는->굵은, 2: 자유단 & 굵은->가는
+      boundaryMode: 'two_media',      // 'fixed_wall' | 'free_rod' | 'two_media'
+      waveformMode: 'pulse',          // 'pulse' | 'sine'
+      phaseDeg: 0,                    // 출발 위상 φ0 (또는 탭 0의 위상차 Δφ)
+      freq: 1.0,                      // 진동수 f (Hz)
+      ampCm: 3.0,                     // 진폭 A (cm)
+      v1: 4.0,                        // 줄 1 속력 (m/s)
+      v2: 2.0,                        // 줄 2 속력 (m/s)
+      isPlaying: true,
+      speedMult: 1.0,
+      showGhost: true,
+      showWavelength: true,
+      showParticles: true,
+
+      // 시간 및 수치 파동 배열
+      simTime: 0,
+      pulseTriggerTime: 0,
+      yCurr: new Float64Array(GRID_N + 1),
+      yPrev: new Float64Array(GRID_N + 1),
+      yNext: new Float64Array(GRID_N + 1),
+
+      // 입사파 원래 모양(잔상) 스냅샷
+      ghostProfile: null,
+      ghostCaptured: false,
+
+      // 고정단 작용·반작용 힘 벡터 (시각화용 정규화 크기)
+      wallForceOnWall: 0,
+
+      // 프레임 뒤로 가기 지원 히스토리 버퍼
+      history: []
+    };
+
+    // 경계 위치 인덱스 계산 (두 매질: 중앙 i=300, 벽면/자유고리: 우측 여백 확보 i=540)
+    function getBoundaryIndex() {
+      return state.boundaryMode === 'two_media' ? 300 : 540;
+    }
+
+    // 줄 굵기(밀도) 한글 설명 반환
+    function getStringThicknessDesc(speed) {
+      if (speed >= 5.5) return '매우 가는 줄 (밀도가 매우 작음)';
+      if (speed >= 3.8) return '가는 줄 (밀도가 작음)';
+      if (speed >= 2.8) return '중간 굵기 줄';
+      if (speed >= 1.8) return '굵은 줄 (밀도가 큼)';
+      return '매우 굵은 줄 (밀도가 매우 큼)';
+    }
+
+    function getShortThicknessLabel(speed) {
+      if (speed >= 5.5) return '매우 가는 줄';
+      if (speed >= 3.8) return '가는 줄';
+      if (speed >= 2.8) return '중간 줄';
+      if (speed >= 1.8) return '굵은 줄';
+      return '매우 굵은 줄';
+    }
+
+    // ---------------------------------------------------------------------------
+    // 3. 1차원 파동 방정식 수치해석 솔버 (내부 연산 전용)
+    // ---------------------------------------------------------------------------
+    function resetWaveArrays() {
+      state.simTime = 0;
+      state.pulseTriggerTime = 0;
+      state.yCurr.fill(0);
+      state.yPrev.fill(0);
+      state.yNext.fill(0);
+      state.ghostProfile = null;
+      state.ghostCaptured = false;
+      state.wallForceOnWall = 0;
+      state.history = [];
+      saveHistorySnapshot();
+    }
+
+    function saveHistorySnapshot() {
+      state.history.push({
+        simTime: state.simTime,
+        yCurr: new Float64Array(state.yCurr),
+        yPrev: new Float64Array(state.yPrev),
+        ghostProfile: state.ghostProfile ? new Float64Array(state.ghostProfile) : null,
+        ghostCaptured: state.ghostCaptured,
+        wallForceOnWall: state.wallForceOnWall
+      });
+      if (state.history.length > 140) {
+        state.history.shift();
+      }
+    }
+
+    function restorePreviousSnapshot() {
+      if (state.history.length <= 1) return;
+      state.history.pop(); // 현재 상태 제거
+      const snap = state.history[state.history.length - 1];
+      state.simTime = snap.simTime;
+      state.yCurr.set(snap.yCurr);
+      state.yPrev.set(snap.yPrev);
+      state.ghostProfile = snap.ghostProfile ? new Float64Array(snap.ghostProfile) : null;
+      state.ghostCaptured = snap.ghostCaptured;
+      state.wallForceOnWall = snap.wallForceOnWall;
+    }
+
+    // 좌측 파원(i = 0) 변위 계산
+    function computeSourceDisplacement(t) {
+      const A = state.ampCm;
+      const phiRad = (state.phaseDeg * Math.PI) / 180;
+
+      if (state.waveformMode === 'pulse') {
+        // 단일 펄스: 주파수 f에 비례한 폭을 가진 가우시안 펄스 1회 발생
+        const sigma = 0.22 / Math.max(0.6, state.freq);
+        const t0 = 3.2 * sigma;
+        const dtPulse = t - t0;
+        if (Math.abs(dtPulse) > 4.5 * sigma) return 0;
+        // 출발 위상 φ0 = 0° -> +마루 출발, φ0 = 180° -> -골 출발
+        const polarity = Math.cos(phiRad);
+        return A * polarity * Math.exp(-(dtPulse * dtPulse) / (2 * sigma * sigma));
+      } else {
+        // 연속 사인파: 초기 0.5T 동안 부드럽게 램프-인(Ramp-in)하여 불연속 충격 방지
+        const period = 1.0 / state.freq;
+        const ramp = t < 0.5 * period ? 0.5 * (1 - Math.cos((Math.PI * t) / (0.5 * period))) : 1.0;
+        return A * ramp * Math.sin(2 * Math.PI * state.freq * t + phiRad);
+      }
+    }
+
+    // 1 서브스텝 전진
+    function stepWavePhysics(dt) {
+      const bIdx = getBoundaryIndex();
+      const maxIdx = state.boundaryMode === 'two_media' ? GRID_N : bIdx;
+
+      const v1 = state.v1;
+      const v2 = state.v2;
+      const c1Sq = (v1 * dt / DX) ** 2;
+      const c2Sq = (v2 * dt / DX) ** 2;
+      // 두 매질 경계면에서의 연속성 보장 유효 계수
+      const cInterfaceSq = ((2 * v1 * v1 * v2 * v2) / (v1 * v1 + v2 * v2)) * ((dt / DX) ** 2);
+
+      // 1) 좌측 파원 구동
+      state.yNext[0] = computeSourceDisplacement(state.simTime + dt);
+
+      // 2) 내부 격자점 업데이트
+      for (let i = 1; i < maxIdx; i++) {
+        let cSq = c1Sq;
+        if (state.boundaryMode === 'two_media') {
+          if (i > bIdx) cSq = c2Sq;
+          else if (i === bIdx) cSq = cInterfaceSq;
+        }
+        state.yNext[i] =
+          2 * state.yCurr[i] -
+          state.yPrev[i] +
+          cSq * (state.yCurr[i + 1] - 2 * state.yCurr[i] + state.yCurr[i - 1]);
+      }
+
+      // 3) 우측 경계 조건 처리
+      if (state.boundaryMode === 'fixed_wall') {
+        // 벽면 고정단: 변위 0 고정
+        state.yNext[bIdx] = 0;
+        // 고정단에서 줄이 벽에 작용하는 힘 (끝단 기울기 비례)
+        const slope = (state.yNext[bIdx - 1] - state.yNext[bIdx]) / DX;
+        state.wallForceOnWall = slope;
+      } else if (state.boundaryMode === 'free_rod') {
+        // 막대 자유단: 끝단 기울기 0 (자유 고리가 상하로 자유롭게 미끄러짐)
+        state.yNext[bIdx] =
+          2 * state.yCurr[bIdx] -
+          state.yPrev[bIdx] +
+          2 * c1Sq * (state.yCurr[bIdx - 1] - state.yCurr[bIdx]);
+        state.wallForceOnWall = 0;
+      } else {
+        // 두 줄 연결 모드: 우측 끝단 무반사 흡수 경계
+        const cour2 = (v2 * dt) / DX;
+        state.yNext[GRID_N] =
+          state.yCurr[GRID_N - 1] +
+          ((cour2 - 1) / (cour2 + 1)) * (state.yNext[GRID_N - 1] - state.yCurr[GRID_N]);
+        state.wallForceOnWall = 0;
+      }
+
+      // 파동이 이미 충분히 진행한 뒤 좌측 파원(i=0)이 0이 되면 반사파가 좌측 끝에서 재반사되지 않도록 흡수 처리
+      if (state.waveformMode === 'pulse') {
+        const sigma = 0.22 / Math.max(0.6, state.freq);
+        const pulseEndTime = 7.8 * sigma;
+        if (state.simTime > pulseEndTime) {
+          const cour1 = (v1 * dt) / DX;
+          state.yNext[0] =
+            state.yCurr[1] +
+            ((cour1 - 1) / (cour1 + 1)) * (state.yNext[1] - state.yCurr[0]);
+        }
+      }
+
+      // 배열 순환
+      const temp = state.yPrev;
+      state.yPrev = state.yCurr;
+      state.yCurr = state.yNext;
+      state.yNext = temp;
+      state.simTime += dt;
+
+      // 단일 펄스일 때 경계면 도달 직전 입사파 원래 모양(잔상) 1회 캡처
+      if (state.waveformMode === 'pulse' && !state.ghostCaptured) {
+        const targetIdx = Math.max(30, bIdx - 70);
+        let maxAbs = 0;
+        let peakIdx = 0;
+        for (let i = 10; i < bIdx; i++) {
+          const a = Math.abs(state.yCurr[i]);
+          if (a > maxAbs) {
+            maxAbs = a;
+            peakIdx = i;
+          }
+        }
+        if (maxAbs > state.ampCm * 0.65 && peakIdx >= targetIdx) {
+          state.ghostProfile = new Float64Array(state.yCurr);
+          state.ghostCaptured = true;
+        }
+      }
+    }
+
+    function advanceSimulationFrame(direction = 1) {
+      if (direction < 0) {
+        restorePreviousSnapshot();
+        return;
+      }
+      if (state.activeTab === 0) {
+        // 탭 1(위상 비교)은 해석적 정현파 애니메이션 시간 전진
+        state.simTime += (1 / 60) * state.speedMult;
+        return;
+      }
+      const steps = Math.max(1, Math.round(SUBSTEPS * state.speedMult));
+      for (let s = 0; s < steps; s++) {
+        stepWavePhysics(DT);
+      }
+      saveHistorySnapshot();
+    }
+
+    // ---------------------------------------------------------------------------
+    // 4. 캔버스 렌더링 및 KaTeX 오버레이 좌표 동기화
+    // ---------------------------------------------------------------------------
+    const canvas = document.getElementById('waveCanvas');
+    const ctx = canvas.getContext('2d');
+    const stageEl = document.getElementById('canvasStage');
+
+    let canvasW = 800;
+    let canvasH = 380;
+
+    function resizeCanvas() {
+      const rect = stageEl.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvasW = Math.max(300, rect.width);
+      canvasH = Math.max(240, rect.height);
+      canvas.width = Math.round(canvasW * dpr);
+      canvas.height = Math.round(canvasH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      renderScene();
+    }
+
+    // 오버레이 라벨 위치 업데이트 헬퍼 (화면 밖 잘림 방지 클램핑 포함)
+    function placeTag(id, x, y, texContent, visible = true) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!visible) {
+        el.classList.add('hidden');
+        return;
+      }
+      el.classList.remove('hidden');
+      if (el.dataset.lastTex !== texContent) {
+        el.dataset.lastTex = texContent;
+        setKatexHTML(el, texContent);
+      }
+      const padX = 56;
+      const padY = 18;
+      const cx = Math.min(Math.max(padX, x), canvasW - padX);
+      const cy = Math.min(Math.max(padY, y), canvasH - padY);
+      el.style.left = `${cx}px`;
+      el.style.top = `${cy}px`;
+    }
+
+    function hideAllOverlayTags() {
+      const ids = [
+        'tagTab1Wave1', 'tagTab1Wave2', 'tagTab1Diff',
+        'tagMed1', 'tagMed2', 'tagBoundary',
+        'tagIncident', 'tagReflected', 'tagTransmitted', 'tagGhost',
+        'tagLambda1', 'tagLambda2', 'tagForceWall', 'tagForceString'
+      ];
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+    }
+
+    // 배경 격자 그리기
+    function drawGrid() {
+      ctx.save();
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 1;
+      const step = 40;
+      for (let x = step; x < canvasW; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvasH);
+        ctx.stroke();
+      }
+      for (let y = step; y < canvasH; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvasW, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // ---------------------------------------------------------------------------
+    // 탭 1 렌더링: 파동의 위상 비교 (교과서 첫 번째 그림 재현)
+    // ---------------------------------------------------------------------------
+    function renderTab0PhaseComparison() {
+      hideAllOverlayTags();
+      drawGrid();
+
+      const leftMargin = Math.max(48, canvasW * 0.08);
+      const rightMargin = Math.max(64, canvasW * 0.1);
+      const waveWidth = canvasW - leftMargin - rightMargin;
+
+      const yCenterTop = canvasH * 0.31;
+      const yCenterBot = canvasH * 0.72;
+      const ampPx = (state.ampCm / 5.0) * Math.min(54, canvasH * 0.14);
+
+      const cycles = 2.25; // 교과서 그림처럼 약 2주기 + 1/4주기 표시
+      const omega = 2 * Math.PI * state.freq;
+      const dPhiRad = (state.phaseDeg * Math.PI) / 180;
+
+      // 위상 비교 기준 수직 점선 (우측 끝 입자 위치 및 중간 비교 지점)
+      const xEnd = leftMargin + waveWidth;
+      ctx.save();
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(leftMargin, 24);
+      ctx.lineTo(leftMargin, canvasH - 20);
+      ctx.moveTo(xEnd, 24);
+      ctx.lineTo(xEnd, canvasH - 20);
+      ctx.stroke();
+      ctx.restore();
+
+      // 두 파동 그리기 함수
+      function drawReferenceSine(yCenter, phaseOffsetRad, strokeColor, beadColor) {
+        // 평형선
+        ctx.save();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(leftMargin, yCenter);
+        ctx.lineTo(xEnd + 16, yCenter);
+        ctx.stroke();
+
+        // +, - 변위 표시 (교과서 스타일)
+        ctx.fillStyle = '#64748b';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText('+', xEnd + 16, yCenter - ampPx * 0.75);
+        ctx.fillText('−', xEnd + 16, yCenter + ampPx * 0.85);
+
+        // 파동 곡선
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        const samples = 240;
+        for (let s = 0; s <= samples; s++) {
+          const u = s / samples;
+          const x = leftMargin + u * waveWidth;
+          // 오른쪽으로 진행하는 파동: sin(k*x - ω*t + φ)
+          const theta = u * cycles * 2 * Math.PI - omega * state.simTime + phaseOffsetRad;
+          const y = yCenter - ampPx * Math.sin(theta);
+          if (s === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // 매질 입자 점 옵션
+        if (state.showParticles) {
+          for (let k = 0; k <= 18; k++) {
+            const u = k / 18;
+            const x = leftMargin + u * waveWidth;
+            const theta = u * cycles * 2 * Math.PI - omega * state.simTime + phaseOffsetRad;
+            const y = yCenter - ampPx * Math.sin(theta);
+            ctx.fillStyle = strokeColor;
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // 우측 끝점 진동 구슬 (교과서 빨간 구슬 / 파란 구슬 재현)
+        const endTheta = cycles * 2 * Math.PI - omega * state.simTime + phaseOffsetRad;
+        const endY = yCenter - ampPx * Math.sin(endTheta);
+
+        // 구슬 상하 이동 가이드 라인
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(xEnd, yCenter - ampPx - 6);
+        ctx.lineTo(xEnd, yCenter + ampPx + 6);
+        ctx.stroke();
+
+        // 입체감 있는 구슬 렌더링
+        const grad = ctx.createRadialGradient(xEnd - 3, endY - 3, 2, xEnd, endY, 10);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.35, beadColor);
+        grad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(xEnd, endY, 9.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      drawReferenceSine(yCenterTop, 0, '#e11d48', '#f43f5e');
+      drawReferenceSine(yCenterBot, dPhiRad, '#2563eb', '#3b82f6');
+
+      // KaTeX 라벨 배치
+      placeTag('tagTab1Wave1', leftMargin + 78, yCenterTop - ampPx - 24, '기준파 ($\\phi_1 = 0^\\circ$)', true);
+      placeTag('tagTab1Wave2', leftMargin + 86, yCenterBot - ampPx - 24, `비교파 ($\\phi_2 = ${state.phaseDeg}^\\circ$)`, true);
+
+      let diffLabel = `위상차 $\\Delta\\phi = ${state.phaseDeg}^\\circ$`;
+      if (state.phaseDeg === 0 || state.phaseDeg === 360) diffLabel += ' (위상 일치)';
+      else if (state.phaseDeg === 180) diffLabel += ' (반대 위상)';
+      else diffLabel += ' (위상 다름)';
+
+      placeTag('tagTab1Diff', canvasW * 0.5, canvasH * 0.515, diffLabel, true);
+    }
+
+    // ---------------------------------------------------------------------------
+    // 탭 2·3 렌더링: 고정단/자유단 반사 및 두 매질 투과·반사
+    // ---------------------------------------------------------------------------
+    function renderTab12WaveSimulation() {
+      hideAllOverlayTags();
+      drawGrid();
+
+      const bIdx = getBoundaryIndex();
+      const maxIdx = state.boundaryMode === 'two_media' ? GRID_N : bIdx;
+
+      const padLeft = Math.max(36, canvasW * 0.045);
+      const padRight = state.boundaryMode === 'two_media' ? Math.max(36, canvasW * 0.045) : Math.max(85, canvasW * 0.11);
+      const plotW = canvasW - padLeft - padRight;
+      const yMid = canvasH * 0.53;
+      // 자유단 보강 중첩(최대 2A = 10cm) 시에도 캔버스 및 막대 안에 여유 있게 들어오도록 스케일 설정
+      const pxPerCm = (canvasH * 0.35) / 10.0;
+      const max2APx = 10.0 * pxPerCm;
+
+      const xAt = (i) => padLeft + (i / maxIdx) * plotW;
+      const yAt = (valCm) => yMid - valCm * pxPerCm;
+      const xBoundary = xAt(bIdx);
+
+      // 1) 매질 영역 배경 음영 구분 (두 줄 연결 모드일 때)
+      if (state.boundaryMode === 'two_media') {
+        ctx.save();
+        ctx.fillStyle = 'rgba(239, 246, 255, 0.45)';
+        ctx.fillRect(padLeft, 16, xBoundary - padLeft, canvasH - 32);
+        ctx.fillStyle = 'rgba(236, 253, 245, 0.5)';
+        ctx.fillRect(xBoundary, 16, padLeft + plotW - xBoundary, canvasH - 32);
+        ctx.restore();
+      }
+
+      // 2) 평형 기준선
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, yMid);
+      ctx.lineTo(padLeft + plotW, yMid);
+      ctx.stroke();
+      ctx.restore();
+
+      // 3) 경계면 (벽면 고정단 / 막대 자유단 / 두 줄 접합점) 렌더링
+      if (state.boundaryMode === 'fixed_wall') {
+        // 고정단 벽면 블록 (교과서 이미지 2 스타일)
+        const wallHalfH = Math.min(canvasH * 0.38, max2APx * 0.72 + 24);
+        ctx.save();
+        ctx.fillStyle = '#e2e8f0';
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        ctx.fillRect(xBoundary, yMid - wallHalfH, 22, wallHalfH * 2);
+        ctx.strokeRect(xBoundary, yMid - wallHalfH, 22, wallHalfH * 2);
+
+        // 빗금 표현
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.2;
+        for (let hy = yMid - wallHalfH + 12; hy <= yMid + wallHalfH - 4; hy += 14) {
+          ctx.beginPath();
+          ctx.moveTo(xBoundary + 2, hy);
+          ctx.lineTo(xBoundary + 20, hy - 10);
+          ctx.stroke();
+        }
+
+        // 고정 고리
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.arc(xBoundary, yMid, 6.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        placeTag('tagBoundary', xBoundary + 12, yMid - wallHalfH - 18, '고정단 ($y = 0$)', true);
+      } else if (state.boundaryMode === 'free_rod') {
+        // 자유단 수직 막대 (최대 진폭 2A 도달 시에도 고리가 벗어나지 않는 충분한 길이 확보)
+        const rodHalfH = Math.min(canvasH * 0.41, max2APx + 18);
+        const rawRingY = yAt(state.yCurr[bIdx]);
+        const ringY = Math.max(yMid - rodHalfH + 9, Math.min(yMid + rodHalfH - 9, rawRingY));
+
+        ctx.save();
+        const rodGrad = ctx.createLinearGradient(xBoundary - 5, 0, xBoundary + 5, 0);
+        rodGrad.addColorStop(0, '#94a3b8');
+        rodGrad.addColorStop(0.5, '#f1f5f9');
+        rodGrad.addColorStop(1, '#64748b');
+        ctx.fillStyle = rodGrad;
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(xBoundary - 5, yMid - rodHalfH, 10, rodHalfH * 2);
+        ctx.strokeRect(xBoundary - 5, yMid - rodHalfH, 10, rodHalfH * 2);
+
+        // 막대 상·하단 이탈 방지 마감 캡
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(xBoundary - 8, yMid - rodHalfH - 3, 16, 4);
+        ctx.fillRect(xBoundary - 8, yMid + rodHalfH - 1, 16, 4);
+
+        // 막대를 감싸고 상하로 움직이는 자유 고리
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.ellipse(xBoundary, ringY, 11, 5.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        placeTag('tagBoundary', xBoundary + 8, yMid - rodHalfH - 18, '자유단 (자유 고리)', true);
+      } else {
+        // 두 줄 경계선
+        ctx.save();
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 1.8;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(xBoundary, 22);
+        ctx.lineTo(xBoundary, canvasH - 22);
+        ctx.stroke();
+        ctx.restore();
+
+        placeTag('tagBoundary', xBoundary, 24, '매질 경계면', true);
+      }
+
+      // 4) 입사파 원래 모양(잔상) 점선 렌더링 (토글 ON & 단일 펄스 반사 후)
+      if (state.showGhost && state.waveformMode === 'pulse' && state.ghostProfile) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(100, 116, 139, 0.55)';
+        ctx.lineWidth = 2.2;
+        ctx.setLineDash([6, 5]);
+        ctx.beginPath();
+        let gPeakIdx = 0;
+        let gMax = 0;
+        for (let i = 0; i <= bIdx; i++) {
+          const val = state.ghostProfile[i];
+          if (Math.abs(val) > gMax) {
+            gMax = Math.abs(val);
+            gPeakIdx = i;
+          }
+          const x = xAt(i);
+          const y = yAt(val);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        if (gMax > 0.2) {
+          const gVal = state.ghostProfile[gPeakIdx];
+          placeTag(
+            'tagGhost',
+            xAt(gPeakIdx),
+            yAt(gVal) + (gVal >= 0 ? -24 : 26),
+            '입사파 원래 모양',
+            true
+          );
+        }
+      }
+
+      // 5) 실제 줄 곡선 렌더링 (줄 굵기는 속력에 반비례하여 시각적 대비 극대화: 가는 줄 3.5px, 굵은 줄 7.0px, 매우 굵은 줄 14.0px)
+      const thickness1 = Math.max(2.2, Math.min(15.0, 14.0 / state.v1));
+      const thickness2 = Math.max(2.2, Math.min(15.0, 14.0 / state.v2));
+
+      // 줄 1 (좌측 영역: 0 ~ bIdx)
+      ctx.save();
+      ctx.strokeStyle = '#1d4ed8';
+      ctx.lineWidth = thickness1;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      for (let i = 0; i <= bIdx; i++) {
+        const x = xAt(i);
+        const y = yAt(state.yCurr[i]);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // 굵은 줄일 때 입체감을 주는 중심선 하이라이트
+      if (thickness1 >= 6.5) {
+        ctx.strokeStyle = 'rgba(147, 197, 253, 0.55)';
+        ctx.lineWidth = Math.max(1.5, thickness1 * 0.24);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 줄 2 (우측 영역: bIdx ~ GRID_N, 두 줄 연결 모드일 때)
+      if (state.boundaryMode === 'two_media') {
+        ctx.save();
+        ctx.strokeStyle = '#047857';
+        ctx.lineWidth = thickness2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        for (let i = bIdx; i <= GRID_N; i++) {
+          const x = xAt(i);
+          const y = yAt(state.yCurr[i]);
+          if (i === bIdx) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        if (thickness2 >= 6.5) {
+          ctx.strokeStyle = 'rgba(110, 231, 183, 0.55)';
+          ctx.lineWidth = Math.max(1.5, thickness2 * 0.24);
+          ctx.stroke();
+        }
+
+        // 접합 매듭점 강조
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(xBoundary, yAt(state.yCurr[bIdx]), Math.max(4.5, Math.max(thickness1, thickness2) * 0.52), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 6) 매질 입자 점 표시 (줄 굵기를 가리지 않고 선명하게 보이도록 흰색 내부 + 테두리 스타일 적용)
+      if (state.showParticles) {
+        ctx.save();
+        const stride = 15;
+        for (let i = 0; i <= maxIdx; i += stride) {
+          const isMed1 = i <= bIdx;
+          const baseT = isMed1 ? thickness1 : thickness2;
+          const r = Math.max(2.5, Math.min(4.6, baseT * 0.36));
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = isMed1 ? '#1e40af' : '#065f46';
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(xAt(i), yAt(state.yCurr[i]), r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 7) 좌측 파원 진동 손잡이(구슬) 표시
+      ctx.save();
+      ctx.fillStyle = '#2563eb';
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(xAt(0), yAt(state.yCurr[0]), 6.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // 8) 고정단 작용·반작용 힘 벡터 화살표 (벽면 고정단 모드일 때)
+      if (state.boundaryMode === 'fixed_wall') {
+        const fMag = state.wallForceOnWall;
+        if (Math.abs(fMag) > 0.35) {
+          // fMag > 0이면 줄이 위로 볼록하게 당기므로 줄->벽 힘은 위쪽(↑), 벽->줄 힘은 아래쪽(↓)
+          const arrowLen = Math.min(72, Math.max(18, Math.abs(fMag) * 14));
+          const dir = fMag > 0 ? -1 : 1; // canvas y좌표 기준 위쪽은 -1
+
+          // F_줄-벽 (벽면에 작용하는 힘, 약간 오른쪽 오프셋)
+          drawForceArrow(xBoundary + 10, yMid, xBoundary + 10, yMid + dir * arrowLen, '#2563eb');
+          // F_벽-줄 (줄 끝에 작용하는 반작용 힘, 약간 왼쪽 오프셋)
+          drawForceArrow(xBoundary - 10, yMid, xBoundary - 10, yMid - dir * arrowLen, '#059669');
+
+          placeTag(
+            'tagForceWall',
+            xBoundary + 44,
+            yMid + dir * (arrowLen * 0.65),
+            '$\\vec{F}_{\\text{줄-벽}}$',
+            true
+          );
+          placeTag(
+            'tagForceString',
+            xBoundary - 46,
+            yMid - dir * (arrowLen * 0.65),
+            '$\\vec{F}_{\\text{벽-줄}}$',
+            true
+          );
+        }
+      }
+
+      // 9) 매질 영역 상단 정보 라벨 (KaTeX)
+      const med1Title =
+        state.boundaryMode === 'two_media'
+          ? `줄 1: ${getShortThicknessLabel(state.v1)} ($v_1 = ${state.v1.toFixed(1)}\\text{ m/s}$)`
+          : `${getShortThicknessLabel(state.v1)} ($v_1 = ${state.v1.toFixed(1)}\\text{ m/s}$)`;
+      placeTag('tagMed1', padLeft + (xBoundary - padLeft) * 0.45, 26, med1Title, true);
+
+      if (state.boundaryMode === 'two_media') {
+        const med2Title = `줄 2: ${getShortThicknessLabel(state.v2)} ($v_2 = ${state.v2.toFixed(1)}\\text{ m/s}$)`;
+        placeTag('tagMed2', xBoundary + (padLeft + plotW - xBoundary) * 0.52, 26, med2Title, true);
+      }
+
+      // 10) 파동 추적 라벨 (단일 펄스일 때 입사파 / 반사파 / 투과파 추적)
+      if (state.waveformMode === 'pulse') {
+        let maxLeft = 0;
+        let idxLeft = 0;
+        for (let i = 8; i < bIdx - 6; i++) {
+          const a = Math.abs(state.yCurr[i]);
+          if (a > maxLeft) {
+            maxLeft = a;
+            idxLeft = i;
+          }
+        }
+
+        if (maxLeft > state.ampCm * 0.22) {
+          const val = state.yCurr[idxLeft];
+          const py = yAt(val) + (val >= 0 ? -24 : 26);
+          if (!state.ghostCaptured) {
+            placeTag('tagIncident', xAt(idxLeft), py, '입사파 ($\\rightarrow$)', true);
+          } else {
+            const phaseChange =
+              state.boundaryMode === 'fixed_wall' ||
+              (state.boundaryMode === 'two_media' && state.v1 > state.v2)
+                ? '180^\\circ'
+                : '0^\\circ';
+            placeTag('tagReflected', xAt(idxLeft), py, `반사파 ($\\leftarrow$, $\\Delta\\phi = ${phaseChange}$)`, true);
+          }
+        }
+
+        if (state.boundaryMode === 'two_media') {
+          let maxRight = 0;
+          let idxRight = bIdx + 6;
+          for (let i = bIdx + 6; i < GRID_N - 8; i++) {
+            const a = Math.abs(state.yCurr[i]);
+            if (a > maxRight) {
+              maxRight = a;
+              idxRight = i;
+            }
+          }
+          if (maxRight > state.ampCm * 0.15) {
+            const val = state.yCurr[idxRight];
+            const py = yAt(val) + (val >= 0 ? -24 : 26);
+            placeTag('tagTransmitted', xAt(idxRight), py, '투과파 ($\\rightarrow$, $\\Delta\\phi = 0^\\circ$)', true);
+          }
+        }
+      }
+
+      // 11) 파장 눈금자 (λ1, λ2) 렌더링 (연속 파동 모드 + 토글 ON)
+      if (state.showWavelength && state.waveformMode === 'sine') {
+        const lam1 = state.v1 / state.freq;
+        const lam2 = state.v2 / state.freq;
+        const pxPerMeter = plotW / (state.boundaryMode === 'two_media' ? DOMAIN_LENGTH : DOMAIN_LENGTH * (bIdx / GRID_N));
+
+        // 줄 1 파장 브래킷 (경계면 왼쪽 여유 공간에 표시)
+        const lam1Px = lam1 * pxPerMeter;
+        const leftAvail = xBoundary - padLeft - 24;
+        if (lam1Px > 28 && lam1Px <= leftAvail) {
+          const x2 = xBoundary - 18;
+          const x1 = x2 - lam1Px;
+          const yBr = canvasH - 36;
+          drawWavelengthBracket(x1, x2, yBr, '#2563eb');
+          placeTag('tagLambda1', (x1 + x2) * 0.5, yBr - 16, `$\\lambda_1 = ${lam1.toFixed(2)}\\text{ m}$`, true);
+        }
+
+        // 줄 2 파장 브래킷
+        if (state.boundaryMode === 'two_media') {
+          const lam2Px = lam2 * pxPerMeter;
+          const rightAvail = padLeft + plotW - xBoundary - 24;
+          if (lam2Px > 24 && lam2Px <= rightAvail) {
+            const x1 = xBoundary + 18;
+            const x2 = x1 + lam2Px;
+            const yBr = canvasH - 36;
+            drawWavelengthBracket(x1, x2, yBr, '#059669');
+            placeTag('tagLambda2', (x1 + x2) * 0.5, yBr - 16, `$\\lambda_2 = ${lam2.toFixed(2)}\\text{ m}$`, true);
+          }
+        }
+      }
+    }
+
+    function drawForceArrow(x1, y1, x2, y2, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const headLen = 9;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 6), y2 - headLen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 6), y2 - headLen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawWavelengthBracket(x1, x2, y, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x1, y - 6);
+      ctx.lineTo(x1, y + 6);
+      ctx.moveTo(x2, y - 6);
+      ctx.lineTo(x2, y + 6);
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2, y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function renderScene() {
+      // 이전 프레임의 파동 잔상이 남지 않도록 캔버스 전체 영역 초기화
+      ctx.clearRect(0, 0, canvasW, canvasH);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvasW, canvasH);
+
+      if (state.activeTab === 0) {
+        renderTab0PhaseComparison();
+      } else {
+        renderTab12WaveSimulation();
+      }
+
+      // 하단 시간 표시 업데이트
+      const timeEl = document.getElementById('liveTimeReadout');
+      setKatexHTML(timeEl, `경과 시간 $t = ${state.simTime.toFixed(2)}\\text{ s}$`);
+    }
+
+    // ---------------------------------------------------------------------------
+    // 5. 실시간 교과 비교 표 및 핵심 정리 UI 동기화
+    // ---------------------------------------------------------------------------
+    function updateDashboardUI() {
+      // 1) 탭 버튼 스타일 동기화
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        const t = Number(btn.dataset.tab);
+        const badge = btn.querySelector('span:first-child');
+        if (t === state.activeTab) {
+          btn.className =
+            'tab-btn flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition shadow-sm bg-blue-600 text-white border-blue-600';
+          badge.className = 'w-5 h-5 rounded-full bg-white/25 text-white text-xs flex items-center justify-center';
+        } else {
+          btn.className =
+            'tab-btn flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition bg-white text-slate-700 border-slate-200 hover:bg-slate-100';
+          badge.className = 'w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs flex items-center justify-center';
+        }
+      });
+
+      // 2) 프리셋 및 슬라이더 표시 전환
+      const isTab0 = state.activeTab === 0;
+      document.getElementById('presetGroupTab0').classList.toggle('hidden', !isTab0);
+      document.getElementById('presetGroupWave').classList.toggle('hidden', isTab0);
+      document.getElementById('boxSliderV1').classList.toggle('hidden', isTab0);
+      document.getElementById('boxSliderV2').classList.toggle('hidden', isTab0);
+      document.getElementById('wrapToggleGhost').classList.toggle('hidden', isTab0);
+      document.getElementById('wrapToggleWavelength').classList.toggle('hidden', isTab0);
+
+      // 두 줄 연결 모드가 아닐 때 줄 2 슬라이더 비활성화
+      const sliderV2 = document.getElementById('sliderV2');
+      sliderV2.disabled = state.boundaryMode !== 'two_media';
+
+      // 슬라이더 라벨 및 수치 KaTeX 업데이트
+      setKatexHTML(
+        document.getElementById('labelSliderPhase'),
+        isTab0 ? '두 파동의 위상차 ($\\Delta\\phi$)' : '출발 위상 ($\\phi_0$)'
+      );
+      setKatexHTML(document.getElementById('valSliderPhase'), `$${state.phaseDeg}^\\circ$`);
+      setKatexHTML(document.getElementById('valSliderFreq'), `$${state.freq.toFixed(2)}\\text{ Hz}$`);
+      setKatexHTML(document.getElementById('valSliderAmp'), `$${state.ampCm.toFixed(1)}\\text{ cm}$`);
+      setKatexHTML(document.getElementById('valSliderV1'), `$${state.v1.toFixed(1)}\\text{ m/s}$`);
+      document.getElementById('descV1').textContent = getShortThicknessLabel(state.v1);
+
+      if (state.boundaryMode === 'two_media') {
+        setKatexHTML(document.getElementById('valSliderV2'), `$${state.v2.toFixed(1)}\\text{ m/s}$`);
+        document.getElementById('descV2').textContent = getShortThicknessLabel(state.v2);
+      } else {
+        setKatexHTML(
+          document.getElementById('valSliderV2'),
+          state.boundaryMode === 'fixed_wall' ? '벽면 고정단 ($y = 0$)' : '막대 자유단'
+        );
+        document.getElementById('descV2').textContent =
+          state.boundaryMode === 'fixed_wall' ? '끝이 고정됨' : '자유 고리';
+      }
+
+      // 3) 실시간 비교 표 및 교과 요약 카드 업데이트
+      const tbody = document.getElementById('comparisonTableBody');
+      const summaryBox = document.getElementById('textbookSummaryBox');
+      const bannerEl = document.getElementById('liveConceptBanner');
+
+      if (isTab0) {
+        setKatexHTML(document.getElementById('tableTitle'), '두 파동의 위상($\\Delta\\phi$) 비교');
+        setKatexHTML(document.getElementById('thCol1'), '기준파 (위쪽)');
+        setKatexHTML(document.getElementById('thCol2'), '비교파 (아래쪽)');
+
+        const period = 1.0 / state.freq;
+        let phaseStateText = '위상 다름';
+        if (state.phaseDeg === 0 || state.phaseDeg === 360) phaseStateText = '위상 일치 ($\\Delta\\phi = 0^\\circ$)';
+        else if (state.phaseDeg === 180) phaseStateText = '반대 위상 ($\\Delta\\phi = 180^\\circ$)';
+        else phaseStateText = `위상 다름 ($\\Delta\\phi = ${state.phaseDeg}^\\circ$)`;
+
+        tbody.innerHTML = `
+          <tr>
+            <td class="py-2.5 px-3 font-semibold text-slate-700">시작 위상 ($\\phi$)</td>
+            <td class="py-2.5 px-3 text-center">$\\phi_1 = 0^\\circ$</td>
+            <td class="py-2.5 px-3 text-center font-bold text-blue-700">$\\phi_2 = ${state.phaseDeg}^\\circ$</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-3 font-semibold text-slate-700">위상차 ($\\Delta\\phi$)</td>
+            <td colspan="2" class="py-2.5 px-3 text-center font-bold text-rose-600">${phaseStateText}</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-3 font-semibold text-slate-700">진동수 ($f$) · 주기 ($T$)</td>
+            <td class="py-2.5 px-3 text-center">$f = ${state.freq.toFixed(2)}\\text{ Hz}$</td>
+            <td class="py-2.5 px-3 text-center">$T = ${period.toFixed(2)}\\text{ s}$</td>
+          </tr>
+          <tr>
+            <td class="py-2.5 px-3 font-semibold text-slate-700">진폭 ($A$)</td>
+            <td class="py-2.5 px-3 text-center">$A = ${state.ampCm.toFixed(1)}\\text{ cm}$</td>
+            <td class="py-2.5 px-3 text-center">$A = ${state.ampCm.toFixed(1)}\\text{ cm}$</td>
+          </tr>
+        `;
+        renderKatexInElement(tbody);
+
+        setKatexHTML(
+          summaryBox,
+          `
+          <p>• <strong>위상</strong>이란 반복되는 파동의 한 주기에서 첫 시작점의 각도($\\phi_0$) 또는 어느 한 순간의 진동 상태를 의미합니다.</p>
+          <p>• $\\Delta\\phi = 0^\\circ$이면 두 구슬이 같은 방향으로 함께 진동하고(<strong>위상 일치</strong>), $\\Delta\\phi = 180^\\circ$이면 항상 정반대 방향으로 진동합니다(<strong>반대 위상</strong>).</p>
+          `
+        );
+        setKatexHTML(
+          bannerEl,
+          `현재 상태: <strong>${phaseStateText}</strong> — 오른쪽 끝 빨간 구슬과 파란 구슬의 진동 방향을 비교해 보세요.`
+        );
+      } else {
+        const lam1 = state.v1 / state.freq;
+        const lam2 = state.v2 / state.freq;
+
+        if (state.boundaryMode === 'two_media') {
+          setKatexHTML(document.getElementById('tableTitle'), '줄 1 vs 줄 2 실시간 물리량 비교');
+          setKatexHTML(document.getElementById('thCol1'), '줄 1 (입사 영역)');
+          setKatexHTML(document.getElementById('thCol2'), '줄 2 (투과 영역)');
+
+          let refPhaseStr = '$\\Delta\\phi = 0^\\circ$ (유지)';
+          let speedRelStr = '$v_1 = v_2$ (반사 없음)';
+          let lamRelStr = '$\\lambda_1 = \\lambda_2$';
+
+          if (state.v1 > state.v2) {
+            refPhaseStr = '<span class="text-rose-600 font-bold">$\\Delta\\phi = 180^\\circ$ (반전)</span>';
+            speedRelStr = '$v_1 > v_2$ (빠른 줄 $\\rightarrow$ 느린 줄)';
+            lamRelStr = '$\\lambda_2 < \\lambda_1$ (파장 감소)';
+          } else if (state.v1 < state.v2) {
+            refPhaseStr = '<span class="text-emerald-700 font-bold">$\\Delta\\phi = 0^\\circ$ (유지)</span>';
+            speedRelStr = '$v_1 < v_2$ (느린 줄 $\\rightarrow$ 빠른 줄)';
+            lamRelStr = '$\\lambda_2 > \\lambda_1$ (파장 증가)';
+          }
+
+          tbody.innerHTML = `
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">줄의 성질</td>
+              <td class="py-2 px-3 text-center text-xs">${getStringThicknessDesc(state.v1)}</td>
+              <td class="py-2 px-3 text-center text-xs">${getStringThicknessDesc(state.v2)}</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">파동의 속력 ($v$)</td>
+              <td class="py-2 px-3 text-center font-bold text-blue-700">$v_1 = ${state.v1.toFixed(1)}\\text{ m/s}$</td>
+              <td class="py-2 px-3 text-center font-bold text-emerald-700">$v_2 = ${state.v2.toFixed(1)}\\text{ m/s}$</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">진동수 ($f$)</td>
+              <td class="py-2 px-3 text-center">$f_1 = ${state.freq.toFixed(2)}\\text{ Hz}$</td>
+              <td class="py-2 px-3 text-center">$f_2 = ${state.freq.toFixed(2)}\\text{ Hz}$ ($f_1 = f_2$)</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">파장 ($\\lambda$)</td>
+              <td class="py-2 px-3 text-center font-bold text-blue-700">$\\lambda_1 = ${lam1.toFixed(2)}\\text{ m}$</td>
+              <td class="py-2 px-3 text-center font-bold text-emerald-700">$\\lambda_2 = ${lam2.toFixed(2)}\\text{ m}$</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">위상 변화 ($\\Delta\\phi$)</td>
+              <td class="py-2 px-3 text-center">반사파: ${refPhaseStr}</td>
+              <td class="py-2 px-3 text-center">투과파: <span class="text-emerald-700 font-bold">$\\Delta\\phi = 0^\\circ$ (일치)</span></td>
+            </tr>
+          `;
+          renderKatexInElement(tbody);
+
+          setKatexHTML(
+            summaryBox,
+            `
+            <p>• <strong>투과파의 위상</strong>은 매질의 굵기와 관계없이 입사파와 <strong>항상 같습니다</strong>($\\Delta\\phi = 0^\\circ$).</p>
+            <p>• 경계면을 지날 때 진동수는 변하지 않으므로($f_1 = f_2$), $v = f\\lambda$에 의해 속력 비와 파장 비가 같습니다($v_1 : v_2 = \\lambda_1 : \\lambda_2$).</p>
+            <p>• 현재 조건(${speedRelStr}): 반사파의 위상은 ${refPhaseStr}, 투과파 파장은 ${lamRelStr}입니다.</p>
+            `
+          );
+          setKatexHTML(
+            bannerEl,
+            `현재 실험: <strong>${getShortThicknessLabel(state.v1)} $\\rightarrow$ ${getShortThicknessLabel(state.v2)}</strong> (${speedRelStr}) · 반사파 ${refPhaseStr}, 투과파 $\\Delta\\phi = 0^\\circ$`
+          );
+        } else {
+          // 벽면 고정단 또는 막대 자유단 모드
+          const isFixed = state.boundaryMode === 'fixed_wall';
+          setKatexHTML(document.getElementById('tableTitle'), isFixed ? '벽면 고정단 반사 분석' : '막대 자유단 반사 분석');
+          setKatexHTML(document.getElementById('thCol1'), '입사파 ($\\rightarrow$)');
+          setKatexHTML(document.getElementById('thCol2'), '반사파 ($\\leftarrow$)');
+
+          tbody.innerHTML = `
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">경계 조건</td>
+              <td colspan="2" class="py-2 px-3 text-center font-bold">${
+                isFixed ? '끝이 고정되어 있음 (고정단)' : '고리가 막대를 따라 자유롭게 움직임 (자유단)'
+              }</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">파동의 속력 ($v$)</td>
+              <td class="py-2 px-3 text-center">$v = ${state.v1.toFixed(1)}\\text{ m/s}$</td>
+              <td class="py-2 px-3 text-center">$v = ${state.v1.toFixed(1)}\\text{ m/s}$ (동일)</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">파장 ($\\lambda$) · 진동수 ($f$)</td>
+              <td class="py-2 px-3 text-center">$\\lambda = ${lam1.toFixed(2)}\\text{ m}$</td>
+              <td class="py-2 px-3 text-center">$f = ${state.freq.toFixed(2)}\\text{ Hz}$</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-slate-700">반사파 위상 변화</td>
+              <td colspan="2" class="py-2 px-3 text-center font-bold ${
+                isFixed ? 'text-rose-600' : 'text-emerald-700'
+              }">${
+            isFixed
+              ? '위상이 $180^\\circ$ 변함 ($\\Delta\\phi = 180^\\circ$, 상하 반전)'
+              : '위상이 바뀌지 않음 ($\\Delta\\phi = 0^\\circ$, 위상 유지)'
+          }</td>
+            </tr>
+          `;
+          renderKatexInElement(tbody);
+
+          setKatexHTML(
+            summaryBox,
+            isFixed
+              ? `
+                <p>• <strong>고정단 반사</strong>: 끝이 고정된 벽에 파동이 도달하면 줄이 벽을 당기는 힘($\\vec{F}_{\\text{줄-벽}}$)의 반작용으로 벽이 줄을 반대 방향으로 당깁니다($\\vec{F}_{\\text{벽-줄}}$).</p>
+                <p>• 이로 인해 반사파는 입사파와 <strong>위상이 $180^\\circ$ 반대</strong>가 되어 왼쪽으로 진행합니다.</p>
+                `
+              : `
+                <p>• <strong>자유단 반사</strong>: 막대에 끼워진 고리처럼 끝이 자유롭게 움직일 수 있는 경계에서는 끝점이 크게 진동합니다.</p>
+                <p>• 반사파는 입사파와 <strong>위상이 바뀌지 않고($\\Delta\\phi = 0^\\circ$)</strong> 같은 모양으로 왼쪽으로 진행합니다.</p>
+                `
+          );
+          setKatexHTML(
+            bannerEl,
+            isFixed
+              ? '현재 실험: <strong>벽면 고정단 반사</strong> — 벽면의 작용·반작용 힘($\\vec{F}_{\\text{줄-벽}}, \\vec{F}_{\\text{벽-줄}}$)과 반사파의 $180^\\circ$ 위상 반전을 관찰하세요.'
+              : '현재 실험: <strong>막대 자유단 반사</strong> — 자유 고리의 상하 운동과 반사파의 위상 유지($\\Delta\\phi = 0^\\circ$)를 관찰하세요.'
+          );
+        }
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // 6. 프리셋 & 사용자 이벤트 바인딩
+    // ---------------------------------------------------------------------------
+    function highlightActivePresetButton(presetKey) {
+      document.querySelectorAll('.preset-btn').forEach((btn) => {
+        const active = btn.dataset.preset === presetKey;
+        if (active) {
+          btn.classList.remove('border-slate-200', 'bg-slate-50', 'hover:bg-slate-100');
+          btn.classList.add('border-blue-600', 'bg-blue-50', 'shadow-sm');
+        } else {
+          btn.classList.remove('border-blue-600', 'bg-blue-50', 'shadow-sm');
+          btn.classList.add('border-slate-200', 'bg-slate-50', 'hover:bg-slate-100');
+        }
+      });
+    }
+
+    function highlightActiveWavePresetButton(waveKey) {
+      document.querySelectorAll('.wave-preset-btn').forEach((btn) => {
+        const active = btn.dataset.wavepreset === waveKey;
+        if (active) {
+          btn.classList.remove('border-slate-200', 'bg-slate-50', 'hover:bg-slate-100');
+          btn.classList.add('border-blue-600', 'bg-blue-50', 'shadow-sm');
+        } else {
+          btn.classList.remove('border-blue-600', 'bg-blue-50', 'shadow-sm');
+          btn.classList.add('border-slate-200', 'bg-slate-50', 'hover:bg-slate-100');
+        }
+      });
+    }
+
+    function applyPreset(presetKey) {
+      highlightActivePresetButton(presetKey);
+      switch (presetKey) {
+        // 탭 1 위상 프리셋
+        case 'phase_0':
+          state.phaseDeg = 0;
+          break;
+        case 'phase_180':
+          state.phaseDeg = 180;
+          break;
+        case 'phase_90':
+          state.phaseDeg = 90;
+          break;
+        case 'phase_270':
+          state.phaseDeg = 270;
+          break;
+
+        // 탭 2·3 경계 및 매질 프리셋
+        case 'fixed_wall':
+          state.boundaryMode = 'fixed_wall';
+          state.v1 = 4.0;
+          break;
+        case 'free_rod':
+          state.boundaryMode = 'free_rod';
+          state.v1 = 4.0;
+          break;
+        case 'thin_to_thick':
+          state.boundaryMode = 'two_media';
+          state.v1 = 4.0;
+          state.v2 = 2.0;
+          break;
+        case 'thick_to_thin':
+          state.boundaryMode = 'two_media';
+          state.v1 = 2.0;
+          state.v2 = 4.0;
+          break;
+        case 'very_thick':
+          state.boundaryMode = 'two_media';
+          state.v1 = 4.0;
+          state.v2 = 1.0;
+          break;
+        case 'same_string':
+          state.boundaryMode = 'two_media';
+          state.v1 = 3.0;
+          state.v2 = 3.0;
+          break;
+      }
+
+      syncSlidersFromState();
+      resetWaveArrays();
+      state.isPlaying = true;
+      updatePlayPauseButton();
+      updateDashboardUI();
+      renderScene();
+    }
+
+    function applyWavePreset(waveKey) {
+      highlightActiveWavePresetButton(waveKey);
+      switch (waveKey) {
+        case 'pulse_0':
+          state.waveformMode = 'pulse';
+          state.phaseDeg = 0;
+          break;
+        case 'pulse_180':
+          state.waveformMode = 'pulse';
+          state.phaseDeg = 180;
+          break;
+        case 'sine_0':
+          state.waveformMode = 'sine';
+          state.phaseDeg = 0;
+          break;
+        case 'sine_90':
+          state.waveformMode = 'sine';
+          state.phaseDeg = 90;
+          break;
+      }
+      syncSlidersFromState();
+      resetWaveArrays();
+      state.isPlaying = true;
+      updatePlayPauseButton();
+      updateDashboardUI();
+      renderScene();
+    }
+
+    function syncSlidersFromState() {
+      document.getElementById('sliderPhase').value = state.phaseDeg;
+      document.getElementById('sliderFreq').value = state.freq;
+      document.getElementById('sliderAmp').value = state.ampCm;
+      document.getElementById('sliderV1').value = state.v1;
+      document.getElementById('sliderV2').value = state.v2;
+    }
+
+    function switchTab(tabIndex) {
+      state.activeTab = tabIndex;
+      if (tabIndex === 0) {
+        state.phaseDeg = 0;
+        highlightActivePresetButton('phase_0');
+      } else if (tabIndex === 1) {
+        // 탭 2: 고정단 반사 & 가는 줄 -> 굵은 줄
+        state.boundaryMode = 'two_media';
+        state.waveformMode = 'pulse';
+        state.phaseDeg = 0;
+        state.v1 = 4.0;
+        state.v2 = 2.0;
+        highlightActivePresetButton('thin_to_thick');
+        highlightActiveWavePresetButton('pulse_0');
+      } else if (tabIndex === 2) {
+        // 탭 3: 자유단 반사 & 굵은 줄 -> 가는 줄
+        state.boundaryMode = 'two_media';
+        state.waveformMode = 'pulse';
+        state.phaseDeg = 0;
+        state.v1 = 2.0;
+        state.v2 = 4.0;
+        highlightActivePresetButton('thick_to_thin');
+        highlightActiveWavePresetButton('pulse_0');
+      }
+
+      syncSlidersFromState();
+      resetWaveArrays();
+      state.isPlaying = true;
+      updatePlayPauseButton();
+      updateDashboardUI();
+      renderScene();
+    }
+
+    function updatePlayPauseButton() {
+      const iconEl = document.getElementById('playPauseIcon');
+      const labelEl = document.getElementById('playPauseLabel');
+      const btn = document.getElementById('btnPlayPause');
+      if (state.isPlaying) {
+        iconEl.textContent = '⏸';
+        labelEl.textContent = '일시정지';
+        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+        btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+      } else {
+        iconEl.textContent = '▶';
+        labelEl.textContent = '재생';
+        btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+        btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // 7. 메인 애니메이션 루프 및 초기화
+    // ---------------------------------------------------------------------------
+    function animationLoop() {
+      if (state.isPlaying) {
+        advanceSimulationFrame(1);
+        renderScene();
+      }
+      requestAnimationFrame(animationLoop);
+    }
+
+    function initApp() {
+      // 정적 HTML 내 모든 KaTeX 수식 일괄 렌더링
+      renderKatexInElement(document.body);
+
+      // 탭 클릭 이벤트
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => switchTab(Number(btn.dataset.tab)));
+      });
+
+      // 프리셋 클릭 이벤트
+      document.querySelectorAll('.preset-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+      });
+      document.querySelectorAll('.wave-preset-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyWavePreset(btn.dataset.wavepreset));
+      });
+
+      // 슬라이더 입력 이벤트
+      document.getElementById('sliderPhase').addEventListener('input', (e) => {
+        state.phaseDeg = Number(e.target.value);
+        highlightActivePresetButton('');
+        if (state.activeTab !== 0) resetWaveArrays();
+        updateDashboardUI();
+        renderScene();
+      });
+
+      document.getElementById('sliderFreq').addEventListener('input', (e) => {
+        state.freq = Number(e.target.value);
+        if (state.activeTab !== 0) resetWaveArrays();
+        updateDashboardUI();
+        renderScene();
+      });
+
+      document.getElementById('sliderAmp').addEventListener('input', (e) => {
+        state.ampCm = Number(e.target.value);
+        if (state.activeTab !== 0) resetWaveArrays();
+        updateDashboardUI();
+        renderScene();
+      });
+
+      document.getElementById('sliderV1').addEventListener('input', (e) => {
+        state.v1 = Number(e.target.value);
+        highlightActivePresetButton('');
+        resetWaveArrays();
+        updateDashboardUI();
+        renderScene();
+      });
+
+      document.getElementById('sliderV2').addEventListener('input', (e) => {
+        state.v2 = Number(e.target.value);
+        highlightActivePresetButton('');
+        resetWaveArrays();
+        updateDashboardUI();
+        renderScene();
+      });
+
+      // 재생/일시정지 및 프레임 제어
+      document.getElementById('btnPlayPause').addEventListener('click', () => {
+        state.isPlaying = !state.isPlaying;
+        updatePlayPauseButton();
+      });
+
+      document.getElementById('btnStepBack').addEventListener('click', () => {
+        state.isPlaying = false;
+        updatePlayPauseButton();
+        advanceSimulationFrame(-1);
+        renderScene();
+      });
+
+      document.getElementById('btnStepForward').addEventListener('click', () => {
+        state.isPlaying = false;
+        updatePlayPauseButton();
+        advanceSimulationFrame(1);
+        renderScene();
+      });
+
+      document.getElementById('btnRelaunch').addEventListener('click', () => {
+        resetWaveArrays();
+        state.isPlaying = true;
+        updatePlayPauseButton();
+        renderScene();
+      });
+
+      document.getElementById('btnResetAll').addEventListener('click', () => {
+        state.speedMult = 1.0;
+        document.querySelectorAll('.speed-btn').forEach((b) => {
+          const isOne = Number(b.dataset.speed) === 1;
+          b.className = isOne
+            ? 'speed-btn px-2 py-1 rounded-lg bg-slate-800 text-white'
+            : 'speed-btn px-2 py-1 rounded-lg text-slate-600 hover:bg-slate-100';
+        });
+        switchTab(1);
+      });
+
+      // 배속 선택 버튼
+      document.querySelectorAll('.speed-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.speedMult = Number(btn.dataset.speed);
+          document.querySelectorAll('.speed-btn').forEach((b) => {
+            b.className = 'speed-btn px-2 py-1 rounded-lg text-slate-600 hover:bg-slate-100';
+          });
+          btn.className = 'speed-btn px-2 py-1 rounded-lg bg-slate-800 text-white';
+        });
+      });
+
+      // 보조 표시 토글
+      document.getElementById('toggleGhost').addEventListener('change', (e) => {
+        state.showGhost = e.target.checked;
+        renderScene();
+      });
+      document.getElementById('toggleWavelength').addEventListener('change', (e) => {
+        state.showWavelength = e.target.checked;
+        renderScene();
+      });
+      document.getElementById('toggleParticles').addEventListener('change', (e) => {
+        state.showParticles = e.target.checked;
+        renderScene();
+      });
+
+      // 키보드 단축키 (Space: 재생/정지, ←/→: 프레임 이동, R: 초기화)
+      window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT') return;
+        if (e.code === 'Space') {
+          e.preventDefault();
+          state.isPlaying = !state.isPlaying;
+          updatePlayPauseButton();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          state.isPlaying = false;
+          updatePlayPauseButton();
+          advanceSimulationFrame(-1);
+          renderScene();
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          state.isPlaying = false;
+          updatePlayPauseButton();
+          advanceSimulationFrame(1);
+          renderScene();
+        } else if (e.key === 'r' || e.key === 'R') {
+          document.getElementById('btnResetAll').click();
+        }
+      });
+
+      // 반응형 캔버스 리사이즈 감지
+      window.addEventListener('resize', resizeCanvas);
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(resizeCanvas).observe(stageEl);
+      }
+
+      // 초기 탭(탭 2: 고정단 반사 & 가는 줄 -> 굵은 줄) 시작 및 루프 가동
+      resizeCanvas();
+      switchTab(1);
+      requestAnimationFrame(animationLoop);
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
